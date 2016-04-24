@@ -40,10 +40,10 @@ public class Cell : MonoBehaviour {
 	void Start () {
 	
 	}
-
+	private Vector3 v = Vector3.zero;
 	// Update is called once per frame
 	void Update () {
-	
+		
 	}
 
 	public void changeColor(CELL_COLOR_TYPE type){
@@ -52,6 +52,8 @@ public class Cell : MonoBehaviour {
 	}
 
 	public void moveUp(){
-		transform.position=Vector3.MoveTowards(transform.position,transform.position+Vector3.one,2);
+		transform.position=Vector3.SmoothDamp(transform.position, new Vector3(1,3,0), ref v, 2);
+//		transform.position=Vector3.SmoothDamp(transform.position,transform.position+Vector3.one, ref v, 2);
+//		StaticUtil.changePos(this.gameObject);
 	}
 }
