@@ -5,7 +5,7 @@ public class MainCamera : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		transform.position = new Vector3(GameControl.STAGE_RANGE,GameControl.STAGE_RANGE, -10);
+		transform.position = new Vector3(GlobalParam.g_StageRange,GlobalParam.g_StageRange, -10);
 	}
 	
 	// Update is called once per frame

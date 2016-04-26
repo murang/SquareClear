@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using DG.Tweening;
 
 public class Cell : MonoBehaviour {
 	
@@ -26,24 +27,26 @@ public class Cell : MonoBehaviour {
 		WHITE,
 		YELLOW
 	};
-	private CELL_COLOR_TYPE m_CellType;
+	private CELL_COLOR_TYPE m_CellType; //use to identify the kind of the cell
+//	private float m_MoveTimeCheck = .0f;
 
-	enum CELL_MOVE_STATE{
-		STOP,
-		UP,
-		DOWN,
-		LEFT,
-		RIGHT
-	}
+
+//	enum CELL_MOVE_STATE{
+//		STOP,
+//		UP,
+//		DOWN,
+//		LEFT,
+//		RIGHT
+//	}
 
 	// Use this for initialization
 	void Start () {
 	
 	}
-	private Vector3 v = Vector3.zero;
+
 	// Update is called once per frame
 	void Update () {
-		
+//		m_MoveTimeCheck += Time.deltaTime;
 	}
 
 	public void changeColor(CELL_COLOR_TYPE type){
@@ -52,8 +55,23 @@ public class Cell : MonoBehaviour {
 	}
 
 	public void moveUp(){
-		transform.position=Vector3.SmoothDamp(transform.position, new Vector3(1,3,0), ref v, 2);
-//		transform.position=Vector3.SmoothDamp(transform.position,transform.position+Vector3.one, ref v, 2);
-//		StaticUtil.changePos(this.gameObject);
+//		if(m_MoveTimeCheck <= GlobalParam.g_MoveDuration)return;
+//		m_MoveTimeCheck = 0;
+		transform.DOMoveY(transform.position.y+1, GlobalParam.g_MoveDuration);
+	}
+	public void moveDown(){
+//		if(m_MoveTimeCheck <= GlobalParam.g_MoveDuration)return;
+//		m_MoveTimeCheck = 0;
+		transform.DOMoveY(transform.position.y-1, GlobalParam.g_MoveDuration);
+	}
+	public void moveLeft(){
+//		if(m_MoveTimeCheck <= GlobalParam.g_MoveDuration)return;
+//		m_MoveTimeCheck = 0;
+		transform.DOMoveX(transform.position.x-1, GlobalParam.g_MoveDuration);
+	}
+	public void moveRight(){
+//		if(m_MoveTimeCheck <= GlobalParam.g_MoveDuration)return;
+//		m_MoveTimeCheck = 0;
+		transform.DOMoveX(transform.position.x+1, GlobalParam.g_MoveDuration);
 	}
 }
