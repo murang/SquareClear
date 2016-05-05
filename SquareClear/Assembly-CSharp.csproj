@@ -63,11 +63,11 @@
  <Reference Include="DOTween">
  <HintPath>E:/GitHub/SquareClear/SquareClear/Assets/DOTween/DOTween.dll</HintPath>
  </Reference>
- <Reference Include="DOTween46">
- <HintPath>E:/GitHub/SquareClear/SquareClear/Assets/DOTween/DOTween46.dll</HintPath>
- </Reference>
  <Reference Include="DOTween43">
  <HintPath>E:/GitHub/SquareClear/SquareClear/Assets/DOTween/DOTween43.dll</HintPath>
+ </Reference>
+ <Reference Include="DOTween46">
+ <HintPath>E:/GitHub/SquareClear/SquareClear/Assets/DOTween/DOTween46.dll</HintPath>
  </Reference>
  <Reference Include="DOTween50">
  <HintPath>E:/GitHub/SquareClear/SquareClear/Assets/DOTween/DOTween50.dll</HintPath>

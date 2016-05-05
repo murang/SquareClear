@@ -30,9 +30,24 @@ public class GameControl : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		checkTouch();
 	}
 
 	void gameStart(){
 		
+	}
+
+	private void checkTouch(){
+//		if(Input.touchCount ==1 && Input.GetTouch(0).phase == TouchPhase.Began){
+//			Debug.Log("tocuh");
+//		}
+		if(Input.GetMouseButton(0)){
+			Ray  ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			RaycastHit hit = new RaycastHit();
+			Physics.Raycast(ray, out hit, 100);
+			if(hit.transform != null){
+				print(hit.point);
+			}
+		}
 	}
 }
