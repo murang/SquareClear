@@ -8,6 +8,11 @@ public class GameControl : MonoBehaviour {
 
 	private GameObject[,] cell_matrix = new GameObject[GlobalParam.g_StageRange*2+1,GlobalParam.g_StageRange*2+1];
 
+	private Ray touchRay;
+	private RaycastHit touchHit;
+
+	//temp for mouse debug on pc
+	private bool isMouseDown = false;
 
 //	private List<Color> m_colorList = new List<Color>();
 	// Use this for initialization
@@ -37,17 +42,30 @@ public class GameControl : MonoBehaviour {
 		
 	}
 
-	private void checkTouch(){
+	void checkTouch(){
 //		if(Input.touchCount ==1 && Input.GetTouch(0).phase == TouchPhase.Began){
 //			Debug.Log("tocuh");
 //		}
-		if(Input.GetMouseButton(0)){
-			Ray  ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-			RaycastHit hit = new RaycastHit();
-			Physics.Raycast(ray, out hit, 100);
-			if(hit.transform != null){
-				print(hit.point);
-			}
+		if(isMouseDown){
+			touchDrag();
+			Debug.Log("check");
 		}
+		if(Input.GetMouseButtonDown(0)){
+			touchRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+			if(Physics.Raycast(touchRay, out touchHit, Mathf.Infinity)){
+				Debug.Log("down");
+				isMouseDown = true;
+			};
+		}
+		if(Input.GetMouseButtonUp(0)){
+			isMouseDown = false;
+			Debug.Log("up");
+		}
+	}
+
+	void touchDrag(){
+		touchRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+		Physics.Raycast(touchRay, out touchHit, Mathf.Infinity);
+		cell_matrix[(int)Mathf.Floor(touchHit.point.x+0.5f), (int)Mathf.Floor(touchHit.point.y+0.5f)].transform.position = new Vector3(touchHit.point.x, touchHit.point.y, 0f);
 	}
 }
