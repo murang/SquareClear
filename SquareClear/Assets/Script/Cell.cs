@@ -3,7 +3,9 @@ using System.Collections;
 using DG.Tweening;
 
 public class Cell : MonoBehaviour {
-	
+
+	private int cell_order_x;
+	private int cell_order_y;
 
 	private ArrayList m_colorList = new ArrayList(){
 		Color.black,
@@ -49,6 +51,11 @@ public class Cell : MonoBehaviour {
 //		m_MoveTimeCheck += Time.deltaTime;
 	}
 
+	public void setOrder(int x, int y){
+		cell_order_x = x;
+		cell_order_y = y;
+	}
+
 	public void changeColor(CELL_COLOR_TYPE type){
 		m_CellType = type;
 		this.GetComponent<Renderer>().material.SetColor("_Color", (Color)m_colorList[(int)m_CellType]);
@@ -57,21 +64,25 @@ public class Cell : MonoBehaviour {
 	public void moveUp(){
 //		if(m_MoveTimeCheck <= GlobalParam.g_MoveDuration)return;
 //		m_MoveTimeCheck = 0;
-		transform.DOMoveY(transform.position.y+1, GlobalParam.g_MoveDuration);
+		transform.DOMoveY(cell_order_y+1, GlobalParam.g_MoveDuration);
+		cell_order_y +=1;
 	}
 	public void moveDown(){
 //		if(m_MoveTimeCheck <= GlobalParam.g_MoveDuration)return;
 //		m_MoveTimeCheck = 0;
-		transform.DOMoveY(transform.position.y-1, GlobalParam.g_MoveDuration);
+		transform.DOMoveY(cell_order_y-1, GlobalParam.g_MoveDuration);
+		cell_order_y -= 1;
 	}
 	public void moveLeft(){
 //		if(m_MoveTimeCheck <= GlobalParam.g_MoveDuration)return;
 //		m_MoveTimeCheck = 0;
-		transform.DOMoveX(transform.position.x-1, GlobalParam.g_MoveDuration);
+		transform.DOMoveX(cell_order_x-1, GlobalParam.g_MoveDuration);
+		cell_order_x -= 1;
 	}
 	public void moveRight(){
 //		if(m_MoveTimeCheck <= GlobalParam.g_MoveDuration)return;
 //		m_MoveTimeCheck = 0;
-		transform.DOMoveX(transform.position.x+1, GlobalParam.g_MoveDuration);
+		transform.DOMoveX(cell_order_x+1, GlobalParam.g_MoveDuration);
+		cell_order_x += 1;
 	}
 }

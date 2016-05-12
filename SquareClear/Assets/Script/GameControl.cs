@@ -33,6 +33,7 @@ public class GameControl : MonoBehaviour {
 
 	void Start () {
 		cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange] = (GameObject)Instantiate(pre_cell, new Vector3(GlobalParam.g_StageRange,GlobalParam.g_StageRange,0), Quaternion.identity);
+		cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().setOrder(GlobalParam.g_StageRange, GlobalParam.g_StageRange);
 		cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().changeColor(Cell.CELL_COLOR_TYPE.RED);
 
 	}
@@ -77,15 +78,14 @@ public class GameControl : MonoBehaviour {
 	}
 
 	void touchDrag(){
-		touchRay = Camera.main.ScreenPointToRay (Input.mousePosition);
-		Physics.Raycast (touchRay, out touchHit, Mathf.Infinity);
+		Vector3 touchPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		switch (currentTouchState) {
 		case TOUCH_STATE.NONE:
 			break;
 		case TOUCH_STATE.JUDGE_DIR:
-			if(Vector2.Distance(touchBegin, new Vector2(touchHit.point.x, touchHit.point.y))>=0.2f){
+			if(Vector2.Distance(touchBegin, new Vector2(touchPos.x, touchPos.y))>=0.1f){
 				currentTouchState = TOUCH_STATE.MOVING;
-				if (Mathf.Abs (touchHit.point.x - touchBegin.x) > Mathf.Abs (touchHit.point.y - touchBegin.y)) {
+				if (Mathf.Abs (touchPos.x - touchBegin.x) > Mathf.Abs (touchPos.y - touchBegin.y)) {
 					moveDir = 1;
 				} else {
 					moveDir = 2;
@@ -93,12 +93,26 @@ public class GameControl : MonoBehaviour {
 			}
 			break;
 		case TOUCH_STATE.MOVING:
-			GameObject moveObj = cell_matrix [(int)Mathf.Floor (touchHit.point.x + 0.5f), (int)Mathf.Floor (touchHit.point.y + 0.5f)];
 			if (moveDir == 1) {
-				moveObj.transform.position = new Vector3 (touchOffset.x + touchHit.point.x, moveObj.transform.position.y, moveObj.transform.position.z);
+				int line_index = (int)Mathf.Floor (touchHit.point.y + 0.5f);
+				for(int i = 0; i<GlobalParam.g_StageRange*2+1; i++){
+					if(cell_matrix[i, line_index] != null){
+						GameObject moveObj = cell_matrix[i, line_index];
+						cell_matrix[i, line_index].transform.position = new Vector3 (touchOffset.x +touchPos.x, moveObj.transform.position.y, moveObj.transform.position.z);
+					}
+				}
 			} else if (moveDir == 2) {
-				moveObj.transform.position = new Vector3 (moveObj.transform.position.x, touchOffset.y + touchHit.point.y, moveObj.transform.position.z);
+				int line_index = (int)Mathf.Floor (touchHit.point.x + 0.5f);
+				for(int i = 0; i<GlobalParam.g_StageRange*2+1; i++){
+					if(cell_matrix[line_index, i] != null){
+						GameObject moveObj = cell_matrix[line_index, i];
+						cell_matrix[line_index, i].transform.position = new Vector3 (moveObj.transform.position.x, touchOffset.y + touchPos.y, moveObj.transform.position.z);
+					}
+				}
 			}
+			break;
+		case TOUCH_STATE.AUTO_ACT:
+			
 			break;
 		}
 
