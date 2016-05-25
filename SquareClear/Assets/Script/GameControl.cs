@@ -99,6 +99,16 @@ public class GameControl : MonoBehaviour {
 					if(cell_matrix[i, line_index] != null){
 						GameObject moveObj = cell_matrix[i, line_index];
 						cell_matrix[i, line_index].transform.position = new Vector3 (touchOffset.x +touchPos.x, moveObj.transform.position.y, moveObj.transform.position.z);
+						if (touchPos.x - touchBegin.x > 0.5f) {
+							currentTouchState = TOUCH_STATE.AUTO_ACT;
+							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveRight();
+							Debug.Log ("move right");
+						}
+						else if(touchPos.x - touchBegin.x < -0.5f){
+							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveLeft();
+							Debug.Log ("move left");
+							currentTouchState = TOUCH_STATE.AUTO_ACT;
+						}
 					}
 				}
 			} else if (moveDir == 2) {
@@ -127,5 +137,9 @@ public class GameControl : MonoBehaviour {
 		touchOffset = Vector2.zero;
 		currentTouchState = TOUCH_STATE.NONE;
 		moveDir = 0;
+	}
+
+	void autoMoveMatrix(){
+	
 	}
 }
