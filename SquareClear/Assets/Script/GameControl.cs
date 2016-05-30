@@ -19,7 +19,7 @@ public class GameControl : MonoBehaviour {
 		NONE,
 		JUDGE_DIR,
 		MOVING,
-		AUTO_ACT
+		AUTO
 	}
 	private TOUCH_STATE currentTouchState = TOUCH_STATE.NONE;
 	private int moveDir = 0; //1:x 2:y
@@ -100,14 +100,14 @@ public class GameControl : MonoBehaviour {
 						GameObject moveObj = cell_matrix[i, line_index];
 						cell_matrix[i, line_index].transform.position = new Vector3 (touchOffset.x +touchPos.x, moveObj.transform.position.y, moveObj.transform.position.z);
 						if (touchPos.x - touchBegin.x > 0.5f) {
-							currentTouchState = TOUCH_STATE.AUTO_ACT;
 							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveRight();
+							currentTouchState = TOUCH_STATE.AUTO;
 							Debug.Log ("move right");
 						}
 						else if(touchPos.x - touchBegin.x < -0.5f){
 							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveLeft();
+							currentTouchState = TOUCH_STATE.AUTO;
 							Debug.Log ("move left");
-							currentTouchState = TOUCH_STATE.AUTO_ACT;
 						}
 					}
 				}
@@ -117,12 +117,19 @@ public class GameControl : MonoBehaviour {
 					if(cell_matrix[line_index, i] != null){
 						GameObject moveObj = cell_matrix[line_index, i];
 						cell_matrix[line_index, i].transform.position = new Vector3 (moveObj.transform.position.x, touchOffset.y + touchPos.y, moveObj.transform.position.z);
+						if (touchPos.y - touchBegin.y > 0.5f) {
+							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveUp();
+							currentTouchState = TOUCH_STATE.AUTO;
+							Debug.Log ("move up");
+						}
+						else if(touchPos.y - touchBegin.y < -0.5f){
+							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveDown();
+							currentTouchState = TOUCH_STATE.AUTO;
+							Debug.Log ("move down");
+						}
 					}
 				}
 			}
-			break;
-		case TOUCH_STATE.AUTO_ACT:
-			
 			break;
 		}
 

@@ -85,4 +85,7 @@ public class Cell : MonoBehaviour {
 		transform.DOMoveX(cell_order_x+1, GlobalParam.g_MoveDuration);
 		cell_order_x += 1;
 	}
+	public void moveBack(){
+		transform.DOMove(new Vector3(cell_order_x, cell_order_y, 0), GlobalParam.g_MoveDuration);
+	}
 }
