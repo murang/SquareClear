@@ -64,28 +64,32 @@ public class Cell : MonoBehaviour {
 	public void moveUp(){
 //		if(m_MoveTimeCheck <= GlobalParam.g_MoveDuration)return;
 //		m_MoveTimeCheck = 0;
-		transform.DOMoveY(cell_order_y+1, GlobalParam.g_MoveDuration);
+//		transform.DOMoveY(cell_order_y+1, GlobalParam.g_MoveDuration);
 		cell_order_y +=1;
+		moveToTarget ();
 	}
 	public void moveDown(){
 //		if(m_MoveTimeCheck <= GlobalParam.g_MoveDuration)return;
 //		m_MoveTimeCheck = 0;
-		transform.DOMoveY(cell_order_y-1, GlobalParam.g_MoveDuration);
+//		transform.DOMoveY(cell_order_y-1, GlobalParam.g_MoveDuration);
 		cell_order_y -= 1;
+		moveToTarget ();
 	}
 	public void moveLeft(){
 //		if(m_MoveTimeCheck <= GlobalParam.g_MoveDuration)return;
 //		m_MoveTimeCheck = 0;
-		transform.DOMoveX(cell_order_x-1, GlobalParam.g_MoveDuration);
+//		transform.DOMoveX(cell_order_x-1, GlobalParam.g_MoveDuration);
 		cell_order_x -= 1;
+		moveToTarget ();
 	}
 	public void moveRight(){
 //		if(m_MoveTimeCheck <= GlobalParam.g_MoveDuration)return;
 //		m_MoveTimeCheck = 0;
-		transform.DOMoveX(cell_order_x+1, GlobalParam.g_MoveDuration);
+//		transform.DOMoveX(cell_order_x+1, GlobalParam.g_MoveDuration);
 		cell_order_x += 1;
+		moveToTarget ();
 	}
-	public void moveBack(){
+	public void moveToTarget(){
 		transform.DOMove(new Vector3(cell_order_x, cell_order_y, 0), GlobalParam.g_MoveDuration);
 	}
 }

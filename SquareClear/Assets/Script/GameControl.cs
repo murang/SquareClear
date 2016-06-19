@@ -72,7 +72,18 @@ public class GameControl : MonoBehaviour {
 			};
 		}
 		if(Input.GetMouseButtonUp(0)){
-			resetTouchState ();
+			if (currentTouchState == TOUCH_STATE.AUTO) {
+				resetTouchState ();
+			} else {
+				resetTouchState ();
+				for (int x = 0; x < GlobalParam.g_StageRange * 2 + 1; x++) {
+					for (int y = 0; y < GlobalParam.g_StageRange * 2 + 1; y++) {
+						if (cell_matrix [x, y] != null) {
+							cell_matrix [x, y].GetComponent<Cell> ().moveToTarget ();
+						}
+					}
+				}
+			}
 //			Debug.Log("up");
 		}
 	}
