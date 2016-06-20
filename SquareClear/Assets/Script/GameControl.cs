@@ -157,7 +157,11 @@ public class GameControl : MonoBehaviour {
 		moveDir = 0;
 	}
 
+	void changeMatrixIndex(int dir, int index, bool addOrReduce){
+		
+	}
+
 	void autoMoveMatrix(){
-	
+		
 	}
 }
