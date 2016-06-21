@@ -41,6 +41,9 @@ public class GameControl : MonoBehaviour {
 		cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange] = (GameObject)Instantiate(pre_cell, new Vector3(GlobalParam.g_StageRange,GlobalParam.g_StageRange,0), Quaternion.identity);
 		cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().setOrder(GlobalParam.g_StageRange, GlobalParam.g_StageRange);
 		cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().changeColor(Cell.CELL_COLOR_TYPE.RED);
+		cell_matrix[GlobalParam.g_StageRange+1, GlobalParam.g_StageRange] = (GameObject)Instantiate(pre_cell, new Vector3(GlobalParam.g_StageRange+1,GlobalParam.g_StageRange,0), Quaternion.identity);
+		cell_matrix[GlobalParam.g_StageRange+1, GlobalParam.g_StageRange].GetComponent<Cell>().setOrder(GlobalParam.g_StageRange+1, GlobalParam.g_StageRange);
+		cell_matrix[GlobalParam.g_StageRange+1, GlobalParam.g_StageRange].GetComponent<Cell>().changeColor(Cell.CELL_COLOR_TYPE.BLUE);
 
 	}
 
@@ -101,12 +104,12 @@ public class GameControl : MonoBehaviour {
 			break;
 		case TOUCH_STATE.JUDGE_DIR:
 			if(Vector2.Distance(touchBegin, new Vector2(touchPos.x, touchPos.y))>=0.1f){
-				currentTouchState = TOUCH_STATE.MOVING;
 				if (Mathf.Abs (touchPos.x - touchBegin.x) > Mathf.Abs (touchPos.y - touchBegin.y)) {
 					moveDir = MOVE_DIR.X;
 				} else {
 					moveDir = MOVE_DIR.Y;
 				}
+				currentTouchState = TOUCH_STATE.MOVING;
 			}
 			break;
 		case TOUCH_STATE.MOVING:
