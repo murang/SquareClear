@@ -21,8 +21,14 @@ public class GameControl : MonoBehaviour {
 		MOVING,
 		AUTO
 	}
+	private enum MOVE_DIR
+	{
+		NONE,
+		X,
+		Y
+	}
 	private TOUCH_STATE currentTouchState = TOUCH_STATE.NONE;
-	private int moveDir = 0; //1:x 2:y
+	private MOVE_DIR moveDir = MOVE_DIR.NONE;
 
 //	private List<Color> m_colorList = new List<Color>();
 	// Use this for initialization
@@ -97,49 +103,73 @@ public class GameControl : MonoBehaviour {
 			if(Vector2.Distance(touchBegin, new Vector2(touchPos.x, touchPos.y))>=0.1f){
 				currentTouchState = TOUCH_STATE.MOVING;
 				if (Mathf.Abs (touchPos.x - touchBegin.x) > Mathf.Abs (touchPos.y - touchBegin.y)) {
-					moveDir = 1;
+					moveDir = MOVE_DIR.X;
 				} else {
-					moveDir = 2;
+					moveDir = MOVE_DIR.Y;
 				}
 			}
 			break;
 		case TOUCH_STATE.MOVING:
-			if (moveDir == 1) {
+			MOVE_DIR t_move = MOVE_DIR.NONE;
+			int t_index = 0;
+			bool t_aORr = false;
+			if (moveDir == MOVE_DIR.X) {
 				int line_index = (int)Mathf.Floor (touchHit.point.y + 0.5f);
-				for(int i = 0; i<GlobalParam.g_StageRange*2+1; i++){
-					if(cell_matrix[i, line_index] != null){
-						GameObject moveObj = cell_matrix[i, line_index];
-						cell_matrix[i, line_index].transform.position = new Vector3 (touchOffset.x +touchPos.x, moveObj.transform.position.y, moveObj.transform.position.z);
+				for (int i = 0; i < GlobalParam.g_StageRange * 2 + 1; i++) {
+					if (cell_matrix [i, line_index] != null) {
+						GameObject moveObj = cell_matrix [i, line_index];
+						cell_matrix [i, line_index].transform.position = new Vector3 (touchOffset.x + touchPos.x, moveObj.transform.position.y, moveObj.transform.position.z);
 						if (touchPos.x - touchBegin.x > 0.5f) {
-							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveRight();
+//							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveRight();
+							moveObj.GetComponent<Cell> ().moveRight ();
+//							changeMatrixIndex (MOVE_DIR.X, line_index, true);
+							t_move = MOVE_DIR.X;
+							t_index = line_index;
+							t_aORr = true;
 							currentTouchState = TOUCH_STATE.AUTO;
 							Debug.Log ("move right");
-						}
-						else if(touchPos.x - touchBegin.x < -0.5f){
-							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveLeft();
+						} else if (touchPos.x - touchBegin.x < -0.5f) {
+//							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveLeft();
+							moveObj.GetComponent<Cell> ().moveLeft ();
+//							changeMatrixIndex (MOVE_DIR.X, line_index, false);
+							t_move = MOVE_DIR.X;
+							t_index = line_index;
+							t_aORr = false;
 							currentTouchState = TOUCH_STATE.AUTO;
 							Debug.Log ("move left");
 						}
 					}
 				}
-			} else if (moveDir == 2) {
+			} else if (moveDir == MOVE_DIR.Y) {
 				int line_index = (int)Mathf.Floor (touchHit.point.x + 0.5f);
-				for(int i = 0; i<GlobalParam.g_StageRange*2+1; i++){
-					if(cell_matrix[line_index, i] != null){
-						GameObject moveObj = cell_matrix[line_index, i];
-						cell_matrix[line_index, i].transform.position = new Vector3 (moveObj.transform.position.x, touchOffset.y + touchPos.y, moveObj.transform.position.z);
+				for (int i = 0; i < GlobalParam.g_StageRange * 2 + 1; i++) {
+					if (cell_matrix [line_index, i] != null) {
+						GameObject moveObj = cell_matrix [line_index, i];
+						cell_matrix [line_index, i].transform.position = new Vector3 (moveObj.transform.position.x, touchOffset.y + touchPos.y, moveObj.transform.position.z);
 						if (touchPos.y - touchBegin.y > 0.5f) {
-							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveUp();
+//							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveUp();
+							moveObj.GetComponent<Cell> ().moveUp ();
+							t_move = MOVE_DIR.Y;
+							t_index = line_index;
+							t_aORr = true;
+//							changeMatrixIndex (MOVE_DIR.Y, line_index, true);
 							currentTouchState = TOUCH_STATE.AUTO;
 							Debug.Log ("move up");
-						}
-						else if(touchPos.y - touchBegin.y < -0.5f){
-							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveDown();
+						} else if (touchPos.y - touchBegin.y < -0.5f) {
+//							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveDown();
+							moveObj.GetComponent<Cell> ().moveDown ();
+//							changeMatrixIndex (MOVE_DIR.Y, line_index, false);
+							t_move = MOVE_DIR.Y;
+							t_index = line_index;
+							t_aORr = false;
 							currentTouchState = TOUCH_STATE.AUTO;
 							Debug.Log ("move down");
 						}
 					}
 				}
+			}
+			if (t_move != MOVE_DIR.NONE) {
+				changeMatrixIndex (t_move, t_index, t_aORr);
 			}
 			break;
 		}
@@ -154,11 +184,42 @@ public class GameControl : MonoBehaviour {
 		touchBegin = Vector2.zero;
 		touchOffset = Vector2.zero;
 		currentTouchState = TOUCH_STATE.NONE;
-		moveDir = 0;
+		moveDir = MOVE_DIR.NONE;
 	}
 
-	void changeMatrixIndex(int dir, int index, bool addOrReduce){
-		
+	void changeMatrixIndex(MOVE_DIR dir, int index, bool addOrReduce){
+		switch (dir) {
+		case MOVE_DIR.X:
+			{
+				if (addOrReduce) {
+					for (int i = GlobalParam.g_StageRange * 2; i > 0; i--) {
+						cell_matrix [i, index] = cell_matrix [i - 1, index];
+					}
+					cell_matrix [0, index] = null;
+				} else {
+					for (int i = 0; i < GlobalParam.g_StageRange * 2; i++) {
+						cell_matrix [i, index] = cell_matrix [i + 1, index];
+					}
+					cell_matrix [GlobalParam.g_StageRange * 2, index] = null;
+				}
+				break;
+			}
+		case MOVE_DIR.Y:
+			{
+				if (addOrReduce) {
+					for (int i = GlobalParam.g_StageRange * 2; i > 0; i--) {
+						cell_matrix [index, i] = cell_matrix [index, i - 1];
+					}
+					cell_matrix [index, 0] = null;
+				} else {
+					for (int i = 0; i < GlobalParam.g_StageRange * 2; i++) {
+						cell_matrix [index, i] = cell_matrix [index, i + 1];
+					}
+					cell_matrix [index, GlobalParam.g_StageRange * 2] = null;
+				}
+				break;
+			}
+		}
 	}
 
 	void autoMoveMatrix(){
