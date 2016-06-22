@@ -10,6 +10,7 @@ public class GameControl : MonoBehaviour {
 
 	private Ray touchRay;
 	private RaycastHit touchHit;
+	private Vector2 touchHitIndex;
 
 	//temp for mouse debug on pc
 	private bool isMouseDown = false;
@@ -77,6 +78,7 @@ public class GameControl : MonoBehaviour {
 				isMouseDown = true;
 				touchBegin = new Vector2 (touchHit.point.x, touchHit.point.y);
 				touchOffset = new Vector2 (touchHit.transform.position.x - touchHit.point.x, touchHit.transform.position.y - touchHit.point.y);
+				touchHitIndex = new Vector2 (touchHit.transform.position.x, touchHit.transform.position.y);
 				currentTouchState = TOUCH_STATE.JUDGE_DIR;
 			};
 		}
@@ -118,10 +120,15 @@ public class GameControl : MonoBehaviour {
 			bool t_aORr = false;
 			if (moveDir == MOVE_DIR.X) {
 				int line_index = (int)Mathf.Floor (touchHit.point.y + 0.5f);
+				if ((cell_matrix [0, line_index] != null && (touchPos.x - touchBegin.x) < 0.0f)
+					|| (cell_matrix [GlobalParam.g_StageRange*2, line_index] != null && (touchPos.x - touchBegin.x) > 0.0f)
+				) {
+					break;
+				}
 				for (int i = 0; i < GlobalParam.g_StageRange * 2 + 1; i++) {
 					if (cell_matrix [i, line_index] != null) {
 						GameObject moveObj = cell_matrix [i, line_index];
-						cell_matrix [i, line_index].transform.position = new Vector3 (touchOffset.x + touchPos.x, moveObj.transform.position.y, moveObj.transform.position.z);
+						cell_matrix [i, line_index].transform.position = new Vector3 (touchOffset.x + touchPos.x + (i-touchHitIndex.x), moveObj.transform.position.y, moveObj.transform.position.z);
 						if (touchPos.x - touchBegin.x > 0.5f) {
 //							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveRight();
 							moveObj.GetComponent<Cell> ().moveRight ();
@@ -145,10 +152,15 @@ public class GameControl : MonoBehaviour {
 				}
 			} else if (moveDir == MOVE_DIR.Y) {
 				int line_index = (int)Mathf.Floor (touchHit.point.x + 0.5f);
+				if ((cell_matrix [line_index, 0] != null && (touchPos.y - touchBegin.y) < 0.0f)
+					|| (cell_matrix [line_index, GlobalParam.g_StageRange*2] != null && (touchPos.y - touchBegin.y) > 0.0f)
+				) {
+					break;
+				}
 				for (int i = 0; i < GlobalParam.g_StageRange * 2 + 1; i++) {
 					if (cell_matrix [line_index, i] != null) {
 						GameObject moveObj = cell_matrix [line_index, i];
-						cell_matrix [line_index, i].transform.position = new Vector3 (moveObj.transform.position.x, touchOffset.y + touchPos.y, moveObj.transform.position.z);
+						cell_matrix [line_index, i].transform.position = new Vector3 (moveObj.transform.position.x, touchOffset.y + touchPos.y + (i - touchHitIndex.y), moveObj.transform.position.z);
 						if (touchPos.y - touchBegin.y > 0.5f) {
 //							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveUp();
 							moveObj.GetComponent<Cell> ().moveUp ();
@@ -186,6 +198,7 @@ public class GameControl : MonoBehaviour {
 		isMouseDown = false;
 		touchBegin = Vector2.zero;
 		touchOffset = Vector2.zero;
+		touchHitIndex = Vector2.zero;
 		currentTouchState = TOUCH_STATE.NONE;
 		moveDir = MOVE_DIR.NONE;
 	}
