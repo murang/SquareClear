@@ -39,13 +39,7 @@ public class GameControl : MonoBehaviour {
 	}
 
 	void Start () {
-		cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange] = (GameObject)Instantiate(pre_cell, new Vector3(GlobalParam.g_StageRange,GlobalParam.g_StageRange,0), Quaternion.identity);
-		cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().setOrder(GlobalParam.g_StageRange, GlobalParam.g_StageRange);
-		cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().changeColor(Cell.CELL_COLOR_TYPE.RED);
-		cell_matrix[GlobalParam.g_StageRange+1, GlobalParam.g_StageRange] = (GameObject)Instantiate(pre_cell, new Vector3(GlobalParam.g_StageRange+1,GlobalParam.g_StageRange,0), Quaternion.identity);
-		cell_matrix[GlobalParam.g_StageRange+1, GlobalParam.g_StageRange].GetComponent<Cell>().setOrder(GlobalParam.g_StageRange+1, GlobalParam.g_StageRange);
-		cell_matrix[GlobalParam.g_StageRange+1, GlobalParam.g_StageRange].GetComponent<Cell>().changeColor(Cell.CELL_COLOR_TYPE.BLUE);
-
+		insertCube (GlobalParam.g_StageRange, GlobalParam.g_StageRange);
 	}
 
 	void OnGUI(){
@@ -137,7 +131,7 @@ public class GameControl : MonoBehaviour {
 							t_index = line_index;
 							t_aORr = true;
 							currentTouchState = TOUCH_STATE.AUTO;
-							Debug.Log ("move right");
+//							Debug.Log ("move right");
 						} else if (touchPos.x - touchBegin.x < -0.5f) {
 //							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveLeft();
 							moveObj.GetComponent<Cell> ().moveLeft ();
@@ -146,7 +140,7 @@ public class GameControl : MonoBehaviour {
 							t_index = line_index;
 							t_aORr = false;
 							currentTouchState = TOUCH_STATE.AUTO;
-							Debug.Log ("move left");
+//							Debug.Log ("move left");
 						}
 					}
 				}
@@ -169,7 +163,7 @@ public class GameControl : MonoBehaviour {
 							t_aORr = true;
 //							changeMatrixIndex (MOVE_DIR.Y, line_index, true);
 							currentTouchState = TOUCH_STATE.AUTO;
-							Debug.Log ("move up");
+//							Debug.Log ("move up");
 						} else if (touchPos.y - touchBegin.y < -0.5f) {
 //							cell_matrix[GlobalParam.g_StageRange, GlobalParam.g_StageRange].GetComponent<Cell>().moveDown();
 							moveObj.GetComponent<Cell> ().moveDown ();
@@ -178,13 +172,14 @@ public class GameControl : MonoBehaviour {
 							t_index = line_index;
 							t_aORr = false;
 							currentTouchState = TOUCH_STATE.AUTO;
-							Debug.Log ("move down");
+//							Debug.Log ("move down");
 						}
 					}
 				}
 			}
 			if (t_move != MOVE_DIR.NONE) {
 				changeMatrixIndex (t_move, t_index, t_aORr);
+				StartCoroutine (checkClear ());
 			}
 			break;
 		}
@@ -192,6 +187,11 @@ public class GameControl : MonoBehaviour {
 //		touchRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 //		Physics.Raycast(touchRay, out touchHit, Mathf.Infinity);
 //		cell_matrix[(int)Mathf.Floor(touchHit.point.x+0.5f), (int)Mathf.Floor(touchHit.point.y+0.5f)].transform.position = new Vector3(touchHit.point.x, touchHit.point.y, 0f);
+	}
+
+	IEnumerator checkClear(){
+		yield return new WaitForSeconds (GlobalParam.g_MoveDuration);
+		Debug.Log ("check");
 	}
 
 	void resetTouchState(){
@@ -208,34 +208,69 @@ public class GameControl : MonoBehaviour {
 		case MOVE_DIR.X:
 			{
 				if (addOrReduce) {
+					int insert_index = -1;
 					for (int i = GlobalParam.g_StageRange * 2; i > 0; i--) {
 						cell_matrix [i, index] = cell_matrix [i - 1, index];
+						if (cell_matrix [i, index] != null) {
+							insert_index = i - 1;
+						}
 					}
 					cell_matrix [0, index] = null;
+					if (insert_index != -1) {
+						insertCube (insert_index, index);
+					}
 				} else {
+					int insert_index = -1;
 					for (int i = 0; i < GlobalParam.g_StageRange * 2; i++) {
 						cell_matrix [i, index] = cell_matrix [i + 1, index];
+						if (cell_matrix [i, index] != null) {
+							insert_index = i + 1;
+						}
 					}
 					cell_matrix [GlobalParam.g_StageRange * 2, index] = null;
+					if (insert_index != -1) {
+						insertCube (insert_index, index);
+					}
 				}
 				break;
 			}
 		case MOVE_DIR.Y:
 			{
 				if (addOrReduce) {
+					int insert_index = -1;
 					for (int i = GlobalParam.g_StageRange * 2; i > 0; i--) {
 						cell_matrix [index, i] = cell_matrix [index, i - 1];
+						if (cell_matrix [index, i] != null) {
+							insert_index = i - 1;
+						}
 					}
 					cell_matrix [index, 0] = null;
+					if (insert_index != -1) {
+						insertCube (index, insert_index);
+					}
 				} else {
+					int insert_index = -1;
 					for (int i = 0; i < GlobalParam.g_StageRange * 2; i++) {
 						cell_matrix [index, i] = cell_matrix [index, i + 1];
+						if (cell_matrix [index, i] != null) {
+							insert_index = i + 1;
+						}
 					}
 					cell_matrix [index, GlobalParam.g_StageRange * 2] = null;
+					if (insert_index != -1) {
+						insertCube (index, insert_index);
+					}
 				}
 				break;
 			}
 		}
+	}
+
+	void insertCube(int index_x, int index_y){
+		cell_matrix[index_x, index_y] = (GameObject)Instantiate(pre_cell, new Vector3(index_x, index_y,0), Quaternion.identity);
+		cell_matrix[index_x, index_y].GetComponent<Cell>().setOrder(index_x, index_y);
+		int r = ((int)Random.Range (0, 100))%GlobalParam.g_ColorLevel;
+		cell_matrix[index_x, index_y].GetComponent<Cell>().changeColor(r);
 	}
 
 	void autoMoveMatrix(){

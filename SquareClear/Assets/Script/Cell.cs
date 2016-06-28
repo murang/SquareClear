@@ -18,18 +18,18 @@ public class Cell : MonoBehaviour {
 		Color.white,
 		Color.yellow
 	};
-	public enum CELL_COLOR_TYPE{
-		BLACK = 0,
-		BLUE,
-		CYAN,
-		GRAY,
-		GREEN,
-		MAGENTA,
-		RED,
-		WHITE,
-		YELLOW
-	};
-	private CELL_COLOR_TYPE m_CellType; //use to identify the kind of the cell
+//	public enum CELL_COLOR_TYPE{
+//		BLACK = 0,
+//		BLUE,
+//		CYAN,
+//		GRAY,
+//		GREEN,
+//		MAGENTA,
+//		RED,
+//		WHITE,
+//		YELLOW
+//	};
+	private int m_CellColorInedx; //use to identify the kind of the cell
 //	private float m_MoveTimeCheck = .0f;
 
 
@@ -56,9 +56,9 @@ public class Cell : MonoBehaviour {
 		cell_order_y = y;
 	}
 
-	public void changeColor(CELL_COLOR_TYPE type){
-		m_CellType = type;
-		this.GetComponent<Renderer>().material.SetColor("_Color", (Color)m_colorList[(int)m_CellType]);
+	public void changeColor(int color_index){
+		m_CellColorInedx = color_index;
+		this.GetComponent<Renderer>().material.SetColor("_Color", (Color)m_colorList[color_index]);
 	}
 
 	public void moveUp(){
@@ -91,5 +91,9 @@ public class Cell : MonoBehaviour {
 	}
 	public void moveToTarget(){
 		transform.DOMove(new Vector3(cell_order_x, cell_order_y, 0), GlobalParam.g_MoveDuration);
+	}
+
+	public int getColorIndex(){
+		return m_CellColorInedx;
 	}
 }
